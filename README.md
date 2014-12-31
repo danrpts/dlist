@@ -3,7 +3,7 @@ dlist
 
 A doubly linked list data structure written in javascript.
 
-Dictionary(attributes)  
+Dictionary(attributes)
 ---
 Both Node and List inherit from the Dictionary object in a pseudo-classsical fashion. The Dictionary is used to manage instance `attributes` with the following API:
 * get(key) 
