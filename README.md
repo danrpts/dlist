@@ -27,7 +27,7 @@ List([element...])
 ---
 The inherited Dictionary methods are used to manage List attributes: `head, tail, cursor`. Head and tail are both dummy nodes that maintain references to the first and last nodes, repectively. Cursor is an object that maintans a reference to the current node and its index. The `List` constructor can accept an optional array or variable-arity of elements to build itself initially. List also exposes the following API for state access and manipulation:
 ### move(index)
-  `Move` the cursor to the specified `index`. Returns `this` for chaining.
+  `Move` the cursor to the specified `index`. Returns `this`.
 ### move(direction)
   `Move` the cursor to either the previous or next node. Supply `direction` as `'prev'` or `'next'`. Returns `this`.
 ### insert(element[, left, right])
