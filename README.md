@@ -43,7 +43,7 @@ The inherited Dictionary methods are used to manage List attributes: `head, tail
   Inserts the `element` as a new node as the first node in the list.
   
 ### each(callback[, thisArg])
-  For each element in the list execute `callback` once. The callback is invoked with the arguments `value, index, node` in that order. Supply an optional `thisArg` to bind context, otherwise undefined will be used.
+  For each element in the list execute `callback` once. The callback is invoked with the arguments `value, index, node` in that order. Supply an optional `thisArg` to bind context, otherwise undefined will be used. Returns `this`.
   
 ### clear()
   Removes all nodes from the list and returns `this`.
