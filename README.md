@@ -9,15 +9,15 @@ Both Node and List inherit from the Dictionary object in a pseudo-classsical fas
 ### get(key)
   Returns the attribute associated with `key`.
 ### set(obj) 
-  Supply set with an object to have each `key`, `value` pair set as an attribute.
+  Supply set with an object to have each `key`, `value` pair set as an attribute. Returns `this`.
 ### set(key, value)
-  Supply set with a `key`, `value` pair for it to be set as an attribute.
+  Supply set with a `key`, `value` pair for it to be set as an attribute. Returns `this`.
 
 Node([element, backlink, forelink])
 ---
 The inherited Dictionary methods are used to manage Node attributes: `element, backlink, forelink`. The `Node` constructor can accept these attributes as optional parameters. Node also exposes an API for quick state access and manipulation:
 ### nullify()
-  Removes a node's forward and backward links.
+  Removes a node's forward and backward links. Returns `this`.
 ### whoami()
   Returns a string representation of the node's classification: head, tail, first, last, singular, and inner.
 ### toString()
