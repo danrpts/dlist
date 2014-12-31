@@ -3,9 +3,9 @@ dlist
 
 A doubly linked list data structure written in javascript.
 
-Dictionary(attributes)
+Dictionary({attributes})
 ---
-Both Node and List inherit from the Dictionary object in a pseudo-classsical fashion. The Dictionary is used to manage instance `attributes` with the following API:
+Both Node and List inherit from the Dictionary object in a pseudo-classsical fashion. The `Dictionary` constructor can accept an optional object to set as its initial attributes. The Dictionary is used to manage instance `attributes` with the following API:
 ### get(key)
   Returns the attribute associated with `key`.
 ### set(obj) 
