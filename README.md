@@ -115,4 +115,3 @@ The inherited Dictionary methods are used to manage List attributes: `head, tail
 
 ### toString()
   Returns a string representation of the elements in the list.
->>>>>>> fa8bb31e1e991d0746d7f98fe85b726a4e7bc559
