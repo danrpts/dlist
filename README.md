@@ -19,7 +19,7 @@ The inherited Dictionary methods are used to manage Node attributes: `element, b
 ### nullify()
   Removes a node's forward and backward links.
 ### whoami()
-  Returns a string representation of the node's type.
+  Returns a string representation of the node's classification: head, tail, first, last, singular, and inner.
 ### toString()
   Returns a string representation of the node's element.
   
