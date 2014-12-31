@@ -6,28 +6,52 @@ A doubly linked list data structure written in javascript.
 Dictionary(attributes)
 ---
 Both Node and List inherit from the Dictionary object in a pseudo-classsical fashion. The Dictionary is used to manage instance `attributes` with the following API:
-### get(key) 
+### get(key)
+  Returns the attribute associated with `key`.
 ### set(obj) 
+  Supply set with an object to have each `key`, `value` pair set as an attribute.
 ### set(key, value)
+  Supply set with a `key`, `value` pair for it to be set as an attribute.
 
 Node([element, backlink, forelink])
 ---
 The inherited Dictionary methods are used to manage Node attributes: `element, backlink, forelink`. Node also exposes an API for quick state access and manipulation:
 ### nullify()
+  Removes a node's forward and backward links.
 ### whoami()
+  Returns a string representation of the node's type.
 ### toString()
+  Returns a string representation of the node's element.
   
 List([element...])
 ---
 The inherited Dictionary methods are used to manage List attributes: `head, tail, cursor`. Head and tail are both dummy nodes that maintain references to the first and last nodes, repectively. Cursor is an object that maintans a reference to the current node and its index. List exposes the following API for state access and manipulation:
 ### move(index)
+  `Move` the cursor to the specified `index`. Returns `this` for chaining.
 ### move(direction)
+  `Move` the cursor to either the previous or next node. Supply `direction` as `'prev'` or `'next'`. Returns `this`.
 ### insert(element[, left, right])
+  Inserts the `element` as a new node between the `left` and `right` nodes. If left and right are not supplied: then `insert` will try to add the node at the cursor postion, but if no cursor is defined it will append the node. Returns the inserted node.
+  
 ### remove([left, right])
+  Removes the node between the `left` and `right` nodes. If left and right are not supplied: then `remove` will try to delete the node at the cursor postion, but if no cursor is defined it will delete the last node. Returns the removed node.
+  
 ### append(element)
+  Inserts the `element` as a new node as the last node in the list.
+  
 ### prepend(element)
+  Inserts the `element` as a new node as the first node in the list.
+  
 ### each(callback[, thisArg])
+  
 ### clear()
+  Removes all nodes from the list and returns `this`.
+  
 ### length()
+  Returns the amount of nodes in the list.
+
 ### toArray()
+  Returns an array representation of the elements in the list.
+
 ### toString()
+  Returns a string representation of the elements in the list.
