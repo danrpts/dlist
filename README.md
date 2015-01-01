@@ -16,8 +16,10 @@ Both Node and List inherit from the Dictionary object in a pseudo-classsical fas
 Node([element, backlink, forelink])
 ---
 The inherited Dictionary methods are used to manage Node attributes: `element, backlink, forelink`. The `Node` constructor can accept these attributes as optional parameters. Node also exposes an API for quick state access and manipulation:
+### link(backlink, forelink)
+  Helper for adding a node's forward and backward links. Returns `this`.
 ### unlink()
-  Removes a node's forward and backward links. Returns `this`.
+  Helper for removing a node's forward and backward links. Returns `this`.
 ### whoami()
   Returns a string representation of the node's classification: head, tail, first, last, singular, and inner.
 ### toString()
