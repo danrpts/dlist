@@ -1,31 +1,4 @@
-function Dictionary (attributes) {
-	this._attributes = attributes || {};
-	return (this instanceof Dictionary) ? this : new Dictionary(attributes);
-}
-
-Dictionary.prototype.get = function (key) {
-	return (typeof key == 'string') ? this._attributes[key] : undefined;
-}
-
-Dictionary.prototype.set = function () {
-	var attr = this._attributes;
-	
-	// Prevent null argument[0] because: null != null. Also prevent Array argument.
-	if (typeof arguments[0] == 'object' && arguments[0] === arguments[0] && arguments[0].constructor != Array) {
-	
-		// Shallow clone to copy objects by reference.
-		for (prop in arguments[0]) {
-			attr[prop] = arguments[0][prop];
-		}
-	}
-	
-	if (typeof arguments[0] == 'string') attr[arguments[0]] = arguments[1];
-	return this;
-}
-
-Dictionary.prototype.toString = function () {
-	return JSON.stringify(this._attributes);
-}
+var Dictionary = require('../ddict');
 
 function Node (data, backlink, forelink) {
 
@@ -35,19 +8,22 @@ function Node (data, backlink, forelink) {
 		'backlink': backlink || null,
 		'forelink': forelink || null
 	});
+	
+	return (this instanceof Node) ? this : new Node(attributes);
+
 }
 
 Node.prototype = Object.create(Dictionary.prototype);
 
 Node.prototype.unlink = function () {
-	var attr = this._attributes;
+	var attr = this.attributes;
 	attr.backlink = null;
 	attr.forelink = null;
 	return this;
 }
 
-Node.prototype.whoami = function () {
-	var attr = this._attributes,
+Node.prototype.type = function () {
+	var attr = this.attributes,
 		element = attr.element,
 		backlink = attr.backlink,
 		forelink = attr.forelink;
@@ -63,15 +39,13 @@ Node.prototype.whoami = function () {
 		   (backlink && !forelink) ? 'tail' : 
 		   (!backlink && forelink) ? 'head' : 
 		   (backlink && forelink) ? (element == 'dummy') ? 'seed' : 'body' : 'unknown';
-		   
-
-		   
+	   
 }
 
 Node.prototype.toString = function () {
-	return JSON.stringify(this._attributes.element);
+	return JSON.stringify(this.attributes.element);
 }
-
+	
 function List (elements) {
 	
 	// List state is maintained by a dictionary object.
@@ -91,12 +65,15 @@ function List (elements) {
 			this.append(element);
 		}, this);
 	}
+	
+	return (this instanceof List) ? this : new List(attributes);
+	
 }
 
 List.prototype = Object.create(Dictionary.prototype);
 
 List.prototype.move = function () {
-	var attr = this._attributes,
+	var attr = this.attributes,
 		to = arguments[0];
 	
 	// Note that lists are 1-indexed.
@@ -134,7 +111,7 @@ List.prototype.move = function () {
 }
 
 List.prototype.each = function (fn, context) {
-	var attr = this._attributes,
+	var attr = this.attributes,
 		current = attr.seed,
 		index = 0;
 	
@@ -152,7 +129,7 @@ List.prototype.each = function (fn, context) {
 }
 
 List.prototype.clear = function () {
-	var attr = this._attributes,
+	var attr = this.attributes,
 		seed = attr.seed;
 	
 	// Reset the list state.
@@ -164,7 +141,7 @@ List.prototype.clear = function () {
 }
 
 List.prototype.insert = function (element, left, right) {
-	var attr = this._attributes,
+	var attr = this.attributes,
 		middle = null,
 		seedIsLeft,
 		seedIsRight;
@@ -187,8 +164,8 @@ List.prototype.insert = function (element, left, right) {
 	if (!!left && !!right) {
 	
 		// Resolve identities of left and right.
-		seedIsLeft = (left.whoami() == 'seed');
-		seedIsRight = (right.whoami() == 'seed');
+		seedIsLeft = (left.type() == 'seed');
+		seedIsRight = (right.type() == 'seed');
 
 		// Case 1: Insert as the germ node.
 		if (seedIsLeft && seedIsRight) {
@@ -218,7 +195,7 @@ List.prototype.insert = function (element, left, right) {
 }
 
 List.prototype.remove = function (left, right) {
-	var attr = this._attributes,
+	var attr = this.attributes,
 		severed,
 		seedIsLeft,
 		seedIsRight;
@@ -242,8 +219,8 @@ List.prototype.remove = function (left, right) {
 	if (severed = !!left ? left.get('forelink') : !!right ? right.get('backlink') : null) {
 	
 		// Resolve identities of left and right.
-		seedIsLeft = (left.whoami() == 'seed');
-		seedIsRight = (right.whoami() == 'seed');
+		seedIsLeft = (left.type() == 'seed');
+		seedIsRight = (right.type() == 'seed');
 		
 		// Case 1: Remove the germ node.
 		if (seedIsLeft && seedIsRight) {
@@ -279,7 +256,7 @@ List.prototype.remove = function (left, right) {
 }
 
 List.prototype.append = function (element) {
-	var attr = this._attributes,
+	var attr = this.attributes,
 		right = attr.seed,
 		left = right.get('backlink') || right;
 	
@@ -288,7 +265,7 @@ List.prototype.append = function (element) {
 }
 
 List.prototype.prepend = function (element) {
-	var attr = this._attributes,
+	var attr = this.attributes,
 		left = attr.seed,
 		right = left.get('forelink') || left;
 	
@@ -297,7 +274,7 @@ List.prototype.prepend = function (element) {
 }
 
 List.prototype.cursor = function () {
-	return this._attributes.cursor;
+	return this.attributes.cursor;
 }
 
 List.prototype.length = function () {

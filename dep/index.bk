@@ -1,0 +1,358 @@
+function Dictionary (attributes) {
+	this._attributes = attributes || {};
+	return (this instanceof Dictionary) ? this : new Dictionary(attributes);
+}
+
+Dictionary.prototype.get = function (key) {
+	return (typeof key == 'string') ? this._attributes[key] : undefined;
+}
+
+/* Overloaded */
+Dictionary.prototype.set = function () {
+	var attr = this._attributes;
+	
+	// Prevent null argument[0] because: null != null. Also prevent Array argument.
+	if (typeof arguments[0] == 'object' && arguments[0] === arguments[0] && arguments[0].constructor != Array) {
+	
+		// Shallow clone to copy objects by reference.
+		for (prop in arguments[0]) {
+			attr[prop] = arguments[0][prop];
+		}
+	}
+	
+	if (typeof arguments[0] == 'string') attr[arguments[0]] = arguments[1];
+	return this;
+}
+
+Dictionary.prototype.toString = function () {
+	return JSON.stringify(this._attributes);
+}
+
+function Node (data, backlink, forelink) {
+
+	// Node state is maintained by a dictionary object.
+	Dictionary.call(this, {
+		'element': data || "dummy",
+		'backlink': backlink || null,
+		'forelink': forelink || null
+	});
+}
+
+Node.prototype = Object.create(Dictionary.prototype);
+
+Node.prototype.unlink = function () {
+	var attr = this._attributes;
+	attr.backlink = null;
+	attr.forelink = null;
+	return this;
+}
+
+Node.prototype.whoami = function () {
+	var attr = this._attributes,
+		element = attr.element,
+		backlink = attr.backlink,
+		forelink = attr.forelink;
+		
+	/* Node classifications */
+	// a dummy node maintains no useful element
+	// the head is a dummy node that maintains a forward link to the first node and a null backward link
+	// the tail is a dummy node that maintains a backward link to the last node and a null forward link
+	// the first node is the first node in a list, with a null backward link
+	// the last node is the last node in a list, with a null forward link
+	// a singular node is one that is the first and last node
+	// an inner node is a node with backward and forward links
+	return (!backlink && !!forelink || !forelink && !backlink) ? 
+				(element === 'dummy') ? 'head' : 'first' 
+		   : (!!backlink && !forelink || !forelink && !backlink) ?
+				(element === 'dummy') ? 'tail' : 'last' 
+		   : (!forelink && !backlink) ? 'singular' : 'inner';
+}
+
+Node.prototype.toString = function () {
+	return JSON.stringify(this._attributes.element);
+}
+
+function List (elements) {
+	
+	// List state is maintained by a dictionary object.
+	Dictionary.call(this, {
+
+		// Seed dummy node that maintains references to the head and tail nodes to aid list operations.
+		'seed': new Node(),
+		
+		// Cursor maintains a reference to a node instance and an index within the range 0 < index <= length
+		'cursor': {'index': 0, 'node': null}
+	});
+	
+	// Allow construction of a List with an array or as a variable-arity function.
+	if (arguments.length) {
+		!(elements instanceof Array) && (elements = Array.prototype.slice.call(arguments));
+		elements.forEach(function (element) {
+			this.append(element);
+		}, this);
+	}
+}
+
+List.prototype = Object.create(Dictionary.prototype);
+
+/* Overloaded */
+List.prototype.move = function () {
+	var attr = this._attributes,
+		cursor = attr.cursor,
+		to, i;
+	
+	// Note that lists are 1-indexed.
+	if (typeof arguments[0] == 'number') {
+		i = arguments[0];
+		
+		/* TODO: Validate index. */
+		
+		// Start at the seed and move right `i` times.
+		cursor.node = attr.seed;
+		while (i) {
+			// Advance the cursor, if advance yields a node then increment the index. **NO** Incrementing the index instead of setting it to i plays well with the each method on an empty list.
+			(cursor.node = cursor.node.get('forelink')) && (cursor.index += 1);
+			i -= 1;
+		}
+	}
+	
+	// Only when cursor is defined.
+	if (typeof arguments[0] == 'string' && !!cursor.node) {	
+		to = arguments[0];
+	
+		if (to == 'next') {
+			
+			// The cursor.node reference will turn null when it falls off the last node.
+			cursor.node = cursor.node.get('forelink');
+			cursor.index = !!cursor.node ? cursor.index += 1 : 0;
+		}
+		
+		if (to == 'prev') {
+		
+			// The cursor.node reference will turn null when it falls off the first node.
+			cursor.node = cursor.node.get('backlink');
+			cursor.index = !!cursor.node ? cursor.index -= 1 : 0;
+		}
+	}
+	
+	// Chaining
+	return this;
+}
+
+List.prototype.each = function (fn, context) {
+	var attr = this._attributes,
+		cursor = attr.cursor,
+		cache = {
+			index: cursor.index,
+			node: cursor.node
+		},
+		element, index, node;
+	
+	// Note that an exception is also thrown from 'move' when list has 0 length.
+	if (typeof fn != 'function') throw TypeError("Callback must be a function.");
+	
+	// Nothing happens on an empty list. TODO: run test to check cursor state on each call to empty list.
+	this.move(1);
+	while (!!cursor.node) {
+		element = cursor.node.get('element');
+		index = cursor.index;
+		node = cursor.node;
+
+		// Moving the cursor before callback execution allows the callback function to do work on a node's links without interning with this loop.
+		this.move('next');
+		fn.call(context || undefined, element, index, node);
+	}
+	
+	// Set the cursor state as it was; even if was not defined.
+	cursor.index = cache.index;
+	cursor.node = cache.node;
+	return this;
+}
+
+List.prototype.clear = function () {
+	var attr = this._attributes,
+		cursor = attr.cursor;
+	
+	// Not necessary, but for good measure.
+	this.each(function (element, index, node) {
+		node.nullify();
+	});
+	
+	// Reset the list state.
+	this.remove(attr.head, attr.tail);
+	
+	// Reset the cursor state.
+	cursor.index = 0;
+	cursor.node = null;
+	return this;
+}
+
+List.prototype.insert = function (data, left, right) {
+	var attr = this._attributes,
+		cursor = attr.cursor,
+		current = cursor.node,
+		middle = null,
+		isHead, isTail;
+	
+	// If left and right are undefined, we have a couple things we can try...
+	if (!left && !right) {
+			
+		// If the cursor is defined, aim to insert data at the cursor's position and grow the list rightward.
+		if (!!current) {
+			right = current;
+			left = current.get('backlink') || attr.head;
+		
+		// Otherwise, append as last node or as a singular node.
+		} else {
+			right = attr.tail;
+			left = right.get('backlink') || attr.head;
+		}
+	}
+	
+	// Check identities of left and right.
+	isHead = !!left && (left.whoami() == 'head');
+	isTail = !!right && (right.whoami() == 'tail');
+	
+	// Case 1: If left and right are head and tail, then insert as singular node.
+	if (isHead && isTail) middle = new Node(data, null, null);
+	
+	// Case 2: If only left is head but right exists, then insert as first node.
+	if (isHead && !isTail && !!right) middle = new Node(data, null, right);
+	
+	// Case 3: If only right is tail but left exists, then insert as last node.
+	if (!isHead && isTail && !!left) middle = new Node(data, left, null);
+	
+	// Case 4: If left and right exist but are not head and tail, then insert as inner node.
+	if (!isHead && !isTail && !!left && !!right) middle = new Node(data, left, right);
+	
+	// Set links to the new node.
+	if (!!left && !!right) {
+		left.set('forelink', middle);
+		right.set('backlink', middle);
+	}
+	
+	// If the cursor points at the right node, then the index must be incremented.
+	if (current === right) cursor.node = middle;
+	return middle;
+}
+
+List.prototype.remove = function (left, right) {
+	var attr = this._attributes,
+		cursor = attr.cursor,
+		current = cursor.node,
+		severed = null,
+		isHead, isTail;
+	
+	// If left and right are undefined...
+	if (!left && !right) {
+		
+		// If cursor is defined, remove it.
+		if (!!current) {
+			right = current.get('forelink') || attr.tail;
+			left = current.get('backlink') || attr.head;
+		
+		// Else remove the last node.
+		} else {
+			right = attr.tail;
+			left = right.get('backlink') || attr.head;
+		}
+	}
+	
+	// Reference the node to remove.
+	severed = !!left ? left.get('forelink') : !!right ? right.get('backlink') : undefined;
+	
+	// Check identities of left and right.
+	isHead = !!left && (left.whoami() == 'head');
+	isTail = !!right && (right.whoami() == 'tail');
+	
+	// Case 1: left and right are head and tail
+	if (isHead && isTail) {
+		left.set('forelink', null);
+		right.set('backlink', null);
+	}
+	
+	// Case 2: left is head
+	if (isHead && !isTail && !!right) {
+		left.set('forelink', right);
+		right.set('backlink', null);
+	}
+	
+	// Case 3: right is tail
+	if (!isHead && isTail && !!left) {
+		left.set('forelink', null);
+		right.set('backlink', left);
+	}
+	
+	// Case 4: anything else
+	if (!isHead && !isTail && !!left && !!right) {
+		left.set('forelink', right);
+		right.set('backlink', left);
+	}
+	
+	// Update the cursor state if applicable.
+	
+	if (current === severed) { 
+		cursor.node = null;
+		cursor.index = 0;
+		
+	// May have to resolve a new cursor index.
+	} else if (!!current) {
+		this.each(function (value, index, node) {
+			(node != current || node === current) && index += 1;
+		});
+	}
+	
+	// Strip the node of its links.
+	severed && severed.nullify();
+	
+	// Return the severed node.
+	return severed;
+}
+
+List.prototype.append = function (data) {
+	var attr = this._attributes,
+		tail = attr.tail,
+		
+		// Upon an empty list 'append' the 'last' node is the head node, and the next node created will be singular.
+		last = tail.get('backlink') || attr.head;
+		console.log(last.whoami());
+	this.insert(data, last, tail);
+	
+	return this;
+}
+
+List.prototype.prepend = function (data) {
+	var attr = this._attributes,
+		head = attr.head,
+		
+		// Likewise, upon an empty list 'prepend' the 'first' node is the tail node, and the next node created will be singular.
+		first = head.get('forelink') || attr.tail;
+	this.insert(data, head, first);
+	
+	return this;
+}
+
+List.prototype.length = function () {
+	
+	// 0 <= length < finite value.
+	var count = 0;
+	this.each(function () {
+		count += 1;
+	});
+	return count;
+}
+
+List.prototype.toArray = function () {
+	var arr = [];
+	this.each(function (element) {
+		arr.push(element);
+	});
+	return arr;
+}
+
+List.prototype.toString = function (delim) {
+	return this.toArray().join(delim || ' ');
+}
+
+// export the List constructor
+module.exports = List;
