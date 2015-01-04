@@ -5,7 +5,7 @@ A doubly linked list data structure written in Javascript, with an extendible pr
   
 List([element...])
 ---
-List depends on the `ddict` dictionary object. The inherited Dictionary methods are used to manage List state: `seed, cursor`. Seed is a dummy node that maintains references to the head and tail nodes, receptively. Cursor points to the current node. The `List` constructor can accept an optional array or variable-arity of elements to build itself initially. On top of the inherited methods from Dictionary, the List also exposes the following API for state access and manipulation:
+List depends on the `ddict` dictionary object. The inherited dictionary methods are used to manage List state: `seed, cursor`. Seed is a dummy node that maintains references to the head and tail nodes, receptively. Cursor points to the current node. The `List` constructor can accept an optional array or variable-arity of elements to build itself initially. On top of the inherited methods from Dictionary, the List also exposes the following API for state access and manipulation:
 
 ### move(index)
   `Move` the cursor to the specified `index`. Returns `this`. Note: Internally the List does not store indices for individual nodes or for the cursor, rather indices exist implicitly.
@@ -45,7 +45,7 @@ List depends on the `ddict` dictionary object. The inherited Dictionary methods 
   
 Node([element, backlink, forelink])
 ---
-Node also depends on the `ddict` dictionary object. The inherited Dictionary methods are used to manage Node state: `element, backlink, forelink`. The `Node` constructor can accept these attributes as optional parameters. The node constructor is not exported, however node references can be returned from some List methods.
+Node also depends on the `ddict` dictionary object. The inherited dictionary methods are used to manage Node state: `element, backlink, forelink`. The `Node` constructor can accept these attributes as optional parameters. The node constructor is not exported, however node references can be returned from some List methods.
 
 ### unlink()
   Helper for removing a node's forward and backward links. Returns `this`.
