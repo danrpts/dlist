@@ -1,4 +1,4 @@
-var Dictionary = require('../ddict');
+var Dictionary = require('ddict');
 
 function Node (data, backlink, forelink) {
 
@@ -261,7 +261,8 @@ List.prototype.append = function (element) {
 		left = right.get('backlink') || right;
 	
 	// The `left` argument will either be the tail node or null, in which case the list is empty.
-	return this.insert(element, left, right);
+	this.insert(element, left, right);
+	return this;
 }
 
 List.prototype.prepend = function (element) {
@@ -270,7 +271,8 @@ List.prototype.prepend = function (element) {
 		right = left.get('forelink') || left;
 	
 	// The `right` argument will either be the head node or null, in which case the list is empty.
-	return this.insert(element, left, right);
+	this.insert(element, left, right);
+	return this;
 }
 
 List.prototype.cursor = function () {
