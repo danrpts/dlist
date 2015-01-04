@@ -6,6 +6,7 @@ A doubly linked list data structure written in javascript.
 Dictionary([attributes])
 ---
 Both Node and List inherit from the Dictionary object in a pseudo-classsical fashion. The `Dictionary` constructor can accept an optional object to set as its initial attributes. The Dictionary is used to manage instance `attributes` with the following API:
+
 ### get(key)
   Returns the attribute associated with `key`.
 ### set(obj) 
@@ -16,8 +17,7 @@ Both Node and List inherit from the Dictionary object in a pseudo-classsical fas
 Node([element, backlink, forelink])
 ---
 The inherited Dictionary methods are used to manage Node attributes: `element, backlink, forelink`. The `Node` constructor can accept these attributes as optional parameters. Node also exposes an API for quick state access and manipulation:
-### link(backlink, forelink)
-  Helper for adding a node's forward and backward links. Returns `this`.
+
 ### unlink()
   Helper for removing a node's forward and backward links. Returns `this`.
 ### whoami()
@@ -28,6 +28,7 @@ The inherited Dictionary methods are used to manage Node attributes: `element, b
 List([element...])
 ---
 The inherited Dictionary methods are used to manage List attributes: `head, tail, cursor`. Head and tail are both dummy nodes that maintain references to the first and last nodes, repectively. Cursor is an object that maintans a reference to the current node and its index. The `List` constructor can accept an optional array or variable-arity of elements to build itself initially. List also exposes the following API for state access and manipulation:
+
 ### move(index)
   `Move` the cursor to the specified `index`. Returns `this`.
 ### move(direction)
