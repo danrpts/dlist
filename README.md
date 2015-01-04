@@ -20,10 +20,10 @@ List depends on the `ddict` dictionary object. The inherited dictionary methods 
   Removes the node between the `left` and `right` nodes. If left and right are not supplied: then `remove` will try to delete the node at the cursor position, but if no cursor is defined it will delete the last node. Returns the removed node.
   
 ### append(element)
-  Inserts the `element` as a new node at the head of the list by delegating to the `insert` method.
+  Inserts the `element` as a new node at the head of the list by delegating to the `insert` method. Returns `this`.
   
 ### prepend(element)
-  Inserts the `element` as a new node at the tail of the list by delegating to the `insert` method.
+  Inserts the `element` as a new node at the tail of the list by delegating to the `insert` method. Returns `this`.
   
 ### each(callback[, thisArg])
   For each node in the list execute `callback` once. The callback is invoked with the arguments `element, index, node` in that order. Supply an optional `thisArg` to bind context, otherwise undefined will be used. Returns `this`.
