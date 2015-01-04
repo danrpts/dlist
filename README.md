@@ -1,11 +1,11 @@
 dlist
 =====
 
-A doubly linked list data structure written in Javascript, with an extendible prototype. This is an experiment with Javascript and pseudo-classical patterns.
+A doubly linked list data structure written in Javascript. This is an experiment with Javascript and pseudo-classical patterns.
   
 List([element...])
 ---
-List depends on the `ddict` dictionary object. The inherited dictionary methods are used to manage List state: `seed, cursor`. Seed is a dummy node that maintains references to the head and tail nodes, receptively. Cursor points to the current node. The `List` constructor can accept an optional array or variable-arity of elements to build itself initially. On top of the inherited methods from Dictionary, the List also exposes the following API for state access and manipulation:
+List depends on the `ddict` dictionary object. The inherited dictionary methods are used to manage List state: `seed, cursor` and allow its prototype to be extended with `extend`. Seed is a dummy node that maintains references to the head and tail nodes, receptively. Cursor points to the current node. The `List` constructor can accept an optional array or variable-arity of elements to build itself initially. On top of the inherited methods from Dictionary, the List also exposes the following API for state access and manipulation:
 
 ### move(index)
   `Move` the cursor to the specified `index`. Returns `this`. Note: Internally the List does not store indices for individual nodes or for the cursor, rather indices exist implicitly.
