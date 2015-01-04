@@ -1,7 +1,7 @@
 {
   "name": "dlist",
   "version": "0.0.0",
-  "description": "A doubly linked list ADT",
+  "description": "A doubly linked list data structure.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,14 +11,11 @@
     "url": "https://github.com/danrpts/dlist.git"
   },
   "keywords": [
-    "list",
-    "linked",
-    "list",
-    "doubly",
-    "linked",
+    "doubly linked list",
+    "linked list",
     "list"
   ],
-  "author": "Dan Peterson",
+  "author": "Dan Peterson <danrpts@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/danrpts/dlist/issues"
