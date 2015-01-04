@@ -44,6 +44,9 @@ The inherited Dictionary methods are used to manage List attributes: `seed, curs
   
 ### clear()
   Removes all nodes from the list and returns `this`.
+
+### cursor()
+  Returns the cursor node for convenience. Otherwise this can be accomplished by calling `get('cursor')` on a List instance.
   
 ### length()
   Returns the amount of nodes in the list.
