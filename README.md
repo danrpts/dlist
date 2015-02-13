@@ -1,4 +1,4 @@
-dlist
+dlist (untested)
 =====
 
 A doubly linked list data structure written in Javascript. This is an experiment with Javascript and pseudo-classical patterns.
